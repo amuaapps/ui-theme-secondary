@@ -1,0 +1,116 @@
+/* Secondary (marketing-style) theme
+   - Scoped only: no :root
+   - Bigger type, airier controls, rounder corners, more depth, slightly bouncier motion
+*/
+.theme-secondary {
+  /* Base colors */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  /* Surface colors */
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  /* Brand colors - adjusted for secondary theme */
+  --primary: 222 92% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  /* Muted/subtle colors */
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 222 92% 96%;
+  --accent-foreground: 222 60% 20%;
+
+  /* Semantic colors */
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 210 40% 98%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 222.2 47.4% 11.2%;
+  --info: 199 89% 48%;
+  --info-foreground: 210 40% 98%;
+
+  /* Border and input colors */
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222 92% 60%;
+
+  /* ----- Geometry ----- */
+  --radius: 0.875rem; /* core: 0.5rem */
+
+  /* ----- Elevation ----- */
+  --ui-shadow-sm: 0 2px 6px -2px hsl(var(--foreground) / 0.14),
+                  0 1px 2px 0 hsl(var(--foreground) / 0.08);
+  --ui-shadow-md: 0 14px 28px -18px hsl(var(--foreground) / 0.32),
+                  0 6px 14px -10px hsl(var(--foreground) / 0.20);
+  --ui-shadow-lg: 0 28px 60px -34px hsl(var(--foreground) / 0.44),
+                  0 14px 28px -18px hsl(var(--foreground) / 0.26);
+
+  /* ----- Typography ----- */
+  /* Keep fonts the same for now (brand-safe); swap later if you want */
+  --ui-font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --ui-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Bigger base scale */
+  --ui-text-body: 1.125rem;     /* core: 1rem */
+  --ui-text-body-sm: 1rem;      /* core: 0.875rem */
+  --ui-text-label: 1rem;        /* core: 0.875rem */
+  --ui-text-button: 1rem;       /* core: 0.875rem */
+  --ui-text-caption: 0.875rem;  /* core: 0.75rem */
+
+  /* Bigger headings */
+  --ui-text-h1: 2.5rem;         /* core: 2rem */
+  --ui-text-h2: 1.875rem;       /* core: 1.5rem */
+  --ui-text-h3: 1.5rem;         /* core: 1.25rem */
+
+  /* Line heights adjusted for the bigger scale */
+  --ui-leading-body: 1.75rem;      /* core: 1.5rem */
+  --ui-leading-body-sm: 1.5rem;    /* core: 1.25rem */
+  --ui-leading-label: 1.5rem;      /* core: 1.25rem */
+  --ui-leading-button: 1.5rem;     /* core: 1.25rem */
+  --ui-leading-caption: 1.25rem;   /* core: 1rem */
+
+  --ui-leading-h1: 3rem;           /* core: 2.25rem */
+  --ui-leading-h2: 2.5rem;         /* core: 2rem */
+  --ui-leading-h3: 2rem;           /* core: 1.75rem */
+
+  /* Slightly "stronger" emphasis */
+  --ui-weight-normal: 400;
+  --ui-weight-medium: 600;     /* core: 500 */
+  --ui-weight-semibold: 700;   /* core: 600 */
+
+  /* ----- Density (airier controls) ----- */
+  --ui-control-h-sm: 2.5rem;   /* 40px (core: 36px) */
+  --ui-control-h-md: 2.875rem; /* 46px (core: 40px) */
+  --ui-control-h-lg: 3.25rem;  /* 52px (core: 44px) */
+
+  --ui-control-px-sm: 1rem;     /* core: 0.75rem */
+  --ui-control-px-md: 1.25rem;  /* core: 1rem */
+  --ui-control-px-lg: 1.5rem;   /* core: 1.25rem */
+
+  --ui-control-py-sm: 0.625rem; /* core: 0.5rem */
+  --ui-control-py-md: 0.75rem;  /* core: 0.625rem */
+  --ui-control-py-lg: 0.875rem; /* core: 0.75rem */
+
+  --ui-control-icon: 2.875rem;  /* 46px (core: 40px-ish) */
+
+  /* ----- Borders & focus ----- */
+  --ui-border-w: 1px;
+  --ui-border-w-strong: 2px;
+
+  --ui-ring-w: 3px;          /* thicker focus ring */
+  --ui-ring-offset-w: 3px;
+
+  /* ----- Motion (slightly more expressive) ----- */
+  --ui-duration-fast: 140ms;   /* core: 120ms */
+  --ui-duration-normal: 220ms; /* core: 180ms */
+  --ui-duration-slow: 320ms;   /* core: 260ms */
+
+  --ui-ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --ui-ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+}

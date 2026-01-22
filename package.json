@@ -1,0 +1,44 @@
+{
+  "name": "@amuaapps/ui-theme-secondary",
+  "version": "0.1.0",
+  "description": "Amua Apps UI Theme Secondary - Marketing-style design tokens with bigger typography and stronger depth",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    "./styles": "./dist/styles.js",
+    "./theme.css": "./dist/theme.css"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "clean": "rm -rf dist",
+    "check:token-contract": "node scripts/check-token-contract.mjs",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amuaapps/ui-theme-secondary.git"
+  },
+  "keywords": [
+    "design-tokens",
+    "theme",
+    "css",
+    "amua",
+    "secondary-theme"
+  ],
+  "author": "Amua Apps",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  }
+}
