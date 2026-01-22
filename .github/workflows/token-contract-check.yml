@@ -1,0 +1,44 @@
+name: Token Contract Check
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - 'src/theme.css'
+      - 'contract/tokens.json'
+      - 'scripts/check-token-contract.mjs'
+      - '.github/workflows/token-contract-check.yml'
+  pull_request:
+    branches:
+      - develop
+      - main
+    paths:
+      - 'src/theme.css'
+      - 'contract/tokens.json'
+      - 'scripts/check-token-contract.mjs'
+      - '.github/workflows/token-contract-check.yml'
+
+jobs:
+  validate-tokens:
+    name: Validate Token Contract
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run token contract validation
+        run: npm run check:token-contract
+
+      - name: Report validation result
+        if: failure()
+        run: |
+          echo "::error::Token contract validation failed. See logs above for missing tokens."
+          exit 1

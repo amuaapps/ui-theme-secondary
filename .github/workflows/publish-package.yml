@@ -1,0 +1,221 @@
+name: Publish Package
+
+on:
+  push:
+    branches:
+      - develop
+      - release
+      - main
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'contract/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.npmrc'
+      - '.github/workflows/publish-package.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  test:
+    name: Test & Validate
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run token contract validation
+        run: npm run check:token-contract
+
+      - name: Build package
+        run: npm run build
+
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Create package tarball
+        run: npm pack
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-tarball
+          path: '*.tgz'
+          retention-days: 7
+
+  publish_dev:
+    name: Publish Dev (PR)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: dev
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@amuaapps'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: package-tarball
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Set dev version
+        run: |
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          DEV_VERSION="${BASE_VERSION}-pr.${{ github.run_number }}"
+          echo "DEV_VERSION=${DEV_VERSION}" >> $GITHUB_ENV
+          npm version --no-git-tag-version "${DEV_VERSION}"
+
+      - name: Publish to GitHub Packages (dev)
+        run: npm publish --tag pr
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log publish metadata
+        run: |
+          echo "📦 Published: @amuaapps/ui-theme-secondary@${{ env.DEV_VERSION }}"
+          echo "🏷️  Tag: pr"
+          echo "🔗 Commit: ${{ github.sha }}"
+
+  publish_staging:
+    name: Publish Staging (RC)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/release'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@amuaapps'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: package-tarball
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Set staging version
+        run: |
+          BASE_VERSION=$(node -p "require('./package.json').version")
+          RC_VERSION="${BASE_VERSION}-rc.${{ github.run_number }}"
+          echo "RC_VERSION=${RC_VERSION}" >> $GITHUB_ENV
+          npm version --no-git-tag-version "${RC_VERSION}"
+
+      - name: Publish to GitHub Packages (staging)
+        run: npm publish --tag rc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log publish metadata
+        run: |
+          echo "📦 Published: @amuaapps/ui-theme-secondary@${{ env.RC_VERSION }}"
+          echo "🏷️  Tag: rc"
+          echo "🔗 Commit: ${{ github.sha }}"
+
+  publish_prod:
+    name: Publish Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@amuaapps'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: package-tarball
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify stable version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "PROD_VERSION=${VERSION}" >> $GITHUB_ENV
+          if [[ "${VERSION}" =~ -pr\.|rc\.|beta|alpha ]]; then
+            echo "❌ Error: package.json version must be stable (X.Y.Z) for production"
+            echo "   Current version: ${VERSION}"
+            exit 1
+          fi
+          echo "✅ Version ${VERSION} is stable"
+
+      - name: Publish to GitHub Packages (production)
+        run: npm publish --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log publish metadata
+        run: |
+          echo "📦 Published: @amuaapps/ui-theme-secondary@${{ env.PROD_VERSION }}"
+          echo "🏷️  Tag: latest"
+          echo "🔗 Commit: ${{ github.sha }}"
