@@ -8,21 +8,9 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 async function buildPackage() {
   await mkdir("dist", { recursive: true });
 
-  await build({
-    entryPoints: ["src/styles.ts"],
-    bundle: true,
-    format: "esm",
-    outfile: "dist/styles.js",
-    loader: {
-      ".css": "css",
-    },
-    minify: false,
-    sourcemap: false,
-  });
+  await copyFile("src/theme.css", "dist/index.css");
 
-  await copyFile("src/theme.css", "dist/theme.css");
-
-  console.log("✅ Build complete: dist/styles.js and dist/theme.css");
+  console.log("✅ Build complete: dist/index.css");
 }
 
 buildPackage().catch((err) => {
